@@ -51,20 +51,9 @@ const io = require("socket.io")(server, {
   },
 });
 
-// signup api response interface
-interface ISignupApiRes {
-  _id?: string;
-  user_name: string;
-  user_email: string;
-  user_role: boolean;
-  user_pic: string;
-  success: string;
-  token: string | undefined;
-}
-
 io.on("connection", (socket: any) => {
   socket.on("setup", (userData: any) => {
-    socket.join(userData._id);
+    socket.join(userData?._id);
     socket.emit("connected");
   });
 
@@ -88,6 +77,6 @@ io.on("connection", (socket: any) => {
   });
 
   socket.off("setup", (userData: any) => {
-    socket.leave(userData._id);
+    socket.leave(userData?._id);
   });
 });
