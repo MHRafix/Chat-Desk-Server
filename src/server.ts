@@ -40,7 +40,7 @@ app.use(errorHandler);
 
 const server = app.listen(port, () => {
   console.log(
-    `⚡️[server]: Server is running at https://chatdesk.onrender.com`
+    `⚡️[server]: Server is running at https://chatdesk-server.up.railway.app`
   );
 });
 
