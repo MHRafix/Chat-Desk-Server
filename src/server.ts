@@ -63,7 +63,7 @@ interface ISignupApiRes {
 }
 
 io.on("connection", (socket: any) => {
-  socket.on("setup", (userData: ISignupApiRes) => {
+  socket.on("setup", (userData: any) => {
     socket.join(userData._id);
     socket.emit("connected");
   });
