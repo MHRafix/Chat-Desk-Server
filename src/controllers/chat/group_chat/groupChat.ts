@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import Chat from '../../../models/Chat';
+import { Request, Response } from "express";
+import Chat from "../../../models/Chat";
 
 /**
  *
@@ -9,38 +9,39 @@ import Chat from '../../../models/Chat';
  */
 
 export const createGroupChat = async (req: Request, res: Response<any>) => {
-	const { uid } = req.query;
+  const { uid } = req.query;
 
-	if (!req.body.users || !req.body.group_name) {
-		return res.status(400).json({ error: 'Please Fill all the feilds' });
-	}
+  if (!req.body.users || !req.body.group_name) {
+    return res.status(400).json({ error: "Please Fill all the feilds" });
+  }
 
-	var users = req.body.users;
+  var users = req.body.users;
 
-	if (users.length < 2) {
-		return res
-			.status(400)
-			.json({ error: 'More than 2 users are required to form a group chat' });
-	}
+  if (users.length < 2) {
+    return res
+      .status(400)
+      .json({ error: "More than 2 users are required to form a group chat" });
+  }
 
-	users.push(uid);
+  users.push(uid);
 
-	try {
-		const groupChat: any = await Chat.create({
-			chatName: req.body.group_name,
-			users,
-			isGroupChat: true,
-			groupAdmin: uid,
-		});
+  try {
+    const groupChat: any = await Chat.create({
+      chatName: req.body.group_name,
+      group_pic: req.body.group_pic,
+      users,
+      isGroupChat: true,
+      groupAdmin: uid,
+    });
 
-		const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
-			.populate('users', '-user_password')
-			.populate('groupAdmin', '-user_password');
+    const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
+      .populate("users", "-user_password")
+      .populate("groupAdmin", "-user_password");
 
-		res.status(200).json(fullGroupChat);
-	} catch (err: any) {
-		res.status(400).json({ error: err.message });
-	}
+    res.status(200).json(fullGroupChat);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
 };
 
 /**
@@ -50,26 +51,26 @@ export const createGroupChat = async (req: Request, res: Response<any>) => {
  */
 
 export const addToGroup = async (req: Request, res: Response<any>) => {
-	const { chat_id, user_id }: { chat_id: string; user_id: string } = req.body;
+  const { chat_id, user_id }: { chat_id: string; user_id: string } = req.body;
 
-	// check if the requester is admin
-	const added = await Chat.findByIdAndUpdate(
-		chat_id,
-		{
-			$push: { users: user_id },
-		},
-		{
-			new: true,
-		}
-	)
-		.populate('users', '-user_password')
-		.populate('groupAdmin', '-user_password');
+  // check if the requester is admin
+  const added = await Chat.findByIdAndUpdate(
+    chat_id,
+    {
+      $push: { users: user_id },
+    },
+    {
+      new: true,
+    }
+  )
+    .populate("users", "-user_password")
+    .populate("groupAdmin", "-user_password");
 
-	if (!added) {
-		res.status(202).json({ error: 'Chat Not Found!' });
-	} else {
-		res.status(200).json(added);
-	}
+  if (!added) {
+    res.status(202).json({ error: "Chat Not Found!" });
+  } else {
+    res.status(200).json(added);
+  }
 };
 
 /**
@@ -79,27 +80,27 @@ export const addToGroup = async (req: Request, res: Response<any>) => {
  */
 
 export const removeFromGroup = async (req: Request, res: Response<any>) => {
-	const { chat_id, user_id }: { chat_id: string; user_id: string } = req.body;
+  const { chat_id, user_id }: { chat_id: string; user_id: string } = req.body;
 
-	// check if the requester is admin
+  // check if the requester is admin
 
-	const removed = await Chat.findByIdAndUpdate(
-		chat_id,
-		{
-			$pull: { users: user_id },
-		},
-		{
-			new: true,
-		}
-	)
-		.populate('users', '-user_password')
-		.populate('groupAdmin', '-user_password');
+  const removed = await Chat.findByIdAndUpdate(
+    chat_id,
+    {
+      $pull: { users: user_id },
+    },
+    {
+      new: true,
+    }
+  )
+    .populate("users", "-user_password")
+    .populate("groupAdmin", "-user_password");
 
-	if (!removed) {
-		res.status(202).json({ error: 'Chat Not Found' });
-	} else {
-		res.status(200).json(removed);
-	}
+  if (!removed) {
+    res.status(202).json({ error: "Chat Not Found" });
+  } else {
+    res.status(200).json(removed);
+  }
 };
 
 /**
@@ -110,23 +111,23 @@ export const removeFromGroup = async (req: Request, res: Response<any>) => {
  */
 
 export const renameGroup = async (req: Request, res: Response<any>) => {
-	const { chatId, chatName } = req.body;
+  const { chatId, chatName } = req.body;
 
-	const updatedChat = await Chat.findByIdAndUpdate(
-		chatId,
-		{
-			chatName: chatName,
-		},
-		{
-			new: true,
-		}
-	)
-		.populate('users', '-user_password')
-		.populate('groupAdmin', '-user_password');
+  const updatedChat = await Chat.findByIdAndUpdate(
+    chatId,
+    {
+      chatName: chatName,
+    },
+    {
+      new: true,
+    }
+  )
+    .populate("users", "-user_password")
+    .populate("groupAdmin", "-user_password");
 
-	if (!updatedChat) {
-		res.status(202).json({ error: 'Chat Not Found!' });
-	} else {
-		res.status(200).json(updatedChat);
-	}
+  if (!updatedChat) {
+    res.status(202).json({ error: "Chat Not Found!" });
+  } else {
+    res.status(200).json(updatedChat);
+  }
 };
