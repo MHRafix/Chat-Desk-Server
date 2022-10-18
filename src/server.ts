@@ -2,6 +2,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 import { connectDB } from "./config/db";
+import { socketSetup } from "./config/socketInit";
 import { errorHandler, notFound } from "./middleware/errorHandler";
 import authRoutes from "./routes/authentication/authRoutes";
 import groupChatRoutes from "./routes/chats/groupChat";
@@ -26,7 +27,7 @@ app.use(
 
 // home route
 app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript ChatDesk Server!");
+  res.send("⚡️ Express + TypeScript ChatDesk Server!");
 });
 
 // all route
@@ -39,12 +40,14 @@ app.use("/api/v1/messages/", messageRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
+// app listening
 const server = app.listen(port, () => {
   console.log(
     `⚡️[server]: Server is running at https://chatdesk-server.up.railway.app`
   );
 });
 
+// socket.io init
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
@@ -53,32 +56,5 @@ const io = require("socket.io")(server, {
   },
 });
 
-io.on("connection", (socket: any) => {
-  socket.on("setup", (userData: any) => {
-    socket.join(userData?._id);
-    socket.emit("connected");
-  });
-
-  socket.on("join chat", (room: any) => {
-    socket.join(room);
-  });
-
-  socket.on("typing", (room: any) => socket.in(room).emit("typing"));
-  socket.on("stop typing", (room: any) => socket.in(room).emit("stop typing"));
-
-  socket.on("new message", (newMessageRecieved: any) => {
-    var chat = newMessageRecieved.chat;
-
-    if (!chat.users) return console.log("chat.users not defined");
-
-    chat.users.forEach((user: any) => {
-      if (user._id == newMessageRecieved.sender._id) return;
-
-      socket.in(user._id).emit("message recieved", newMessageRecieved);
-    });
-  });
-
-  socket.off("setup", (userData: any) => {
-    socket.leave(userData?._id);
-  });
-});
+// socket.io setup
+io.on("connection", socketSetup);
