@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
-import Chat from '../../../models/Chat';
-import User from '../../../models/User';
+import { Request, Response } from "express";
+import Chat from "../../../models/Chat";
+import User from "../../../models/User";
 
 /**
  *
@@ -10,77 +10,77 @@ import User from '../../../models/User';
  */
 
 interface ICUser {
-	_id: string;
-	createdAt: string;
-	updatedAt: string;
-	user_email: string;
-	user_name: string;
-	user_pic: string;
-	user_role: boolean;
-	__v: number;
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+  user_email: string;
+  user_name: string;
+  user_pic: string;
+  user_role: boolean;
+  __v: number;
 }
 
 interface IOneOneChat {
-	_id: string;
-	chatName: string;
-	createdAt: string;
-	isGroupChat: boolean;
-	updatedAt: string;
-	groupAdmin?: ICUser;
-	users: ICUser[];
-	__v: number;
+  _id: string;
+  chatName: string;
+  createdAt: string;
+  isGroupChat: boolean;
+  updatedAt: string;
+  groupAdmin?: ICUser;
+  users: ICUser[];
+  __v: number;
 }
 
 export const createChat = async (req: Request, res: Response) => {
-	// id dependency
-	const { user_id } = req.body;
-	const { uid } = req.params;
+  // id dependency
+  const { user_id } = req.body;
+  const { uid } = req.params;
 
-	// validate user id
-	if (!user_id) {
-		return res.status(400).json({ error: 'User id not sent!' });
-	}
+  // validate user id
+  if (!user_id) {
+    return res.status(400).json({ error: "User id not sent!" });
+  }
 
-	// find chat
-	var isChat: any = await Chat.find({
-		isGroupChat: false,
-		$and: [
-			{ users: { _id: uid } },
-			{ users: { _id: user_id } },
-			// { users: { $elemMatch: { $eq: uid } } },
-			// { users: { $elemMatch: { $eq: user_id } } },
-		],
-	})
-		.populate('users', '-user_password')
-		.populate('last_message');
+  // find chat
+  var isChat: any = await Chat.find({
+    isGroupChat: false,
+    $and: [
+      { users: { _id: uid } },
+      { users: { _id: user_id } },
+      // { users: { $elemMatch: { $eq: uid } } },
+      // { users: { $elemMatch: { $eq: user_id } } },
+    ],
+  })
+    .populate("users", "-user_password")
+    .populate("last_message");
 
-	isChat = await User.populate(isChat, {
-		path: 'last_message.sender',
-		select: 'user_name user_pic, user_email',
-	});
+  isChat = await User.populate(isChat, {
+    path: "last_message.sender",
+    select: "user_name user_pic, user_email",
+  });
 
-	// chek is chat
-	if (isChat.length > 0) {
-		res.status(200).json(isChat[0]);
-	} else {
-		var chatData: any = {
-			chatName: 'sender',
-			isGroupChat: false,
-			users: [uid, user_id],
-		};
-	}
+  // chek is chat
+  if (isChat.length > 0) {
+    res.status(200).json(isChat[0]);
+  } else {
+    var chatData: any = {
+      chatName: "sender",
+      isGroupChat: false,
+      users: [uid, user_id],
+    };
+  }
 
-	// create chat
-	try {
-		const createdChat = await Chat.create(chatData);
-		const FullChat = await Chat.findOne({
-			_id: createdChat._id,
-		}).populate('users', '-user_password');
+  // create chat
+  try {
+    const createdChat = await Chat.create(chatData);
+    const FullChat = await Chat.findOne({
+      _id: createdChat._id,
+    }).populate("users", "-user_password");
 
-		res.status(200).json(FullChat);
-	} catch (err: any) {
-		res.status(400).json({ error: err.message });
-	}
+    res.status(200).json(FullChat);
+  } catch (err: any) {
+    res.status(400).json({ error: err.message });
+  }
 };
 
 /**
@@ -91,19 +91,19 @@ export const createChat = async (req: Request, res: Response) => {
  */
 
 export const allChat = async (
-	req: Request,
-	res: Response<IOneOneChat[] | { error: string }>
-) => {
-	const { uid } = req.params;
-	const all_chats: IOneOneChat[] | never[] | any[] = await Chat.find({
-		users: { _id: uid },
-	})
-		.populate('users', '-user_password')
-		.populate('groupAdmin', '-user_password')
-		.populate('last_message')
-		.sort({ updatedAt: -1 });
+  req: Request,
+  res: Response<IOneOneChat[] | { error: string }>
+): Promise<void> => {
+  const { uid } = req.params;
+  const all_chats: IOneOneChat[] | never[] | any[] = await Chat.find({
+    users: { _id: uid },
+  })
+    .populate("users", "-user_password")
+    .populate("groupAdmin", "-user_password")
+    .populate("last_message")
+    .sort({ updatedAt: -1 });
 
-	if (all_chats?.length) {
-		res.status(200).json(all_chats);
-	}
+  if (all_chats?.length) {
+    res.status(200).json(all_chats);
+  }
 };

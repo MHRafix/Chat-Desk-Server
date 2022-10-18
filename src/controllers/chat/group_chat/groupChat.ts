@@ -52,7 +52,10 @@ export const createGroupChat = async (req: Request, res: Response<any>) => {
  * @access        protected
  */
 
-export const addToGroup = async (req: Request, res: Response<any>) => {
+export const addToGroup = async (
+  req: Request,
+  res: Response<any>
+): Promise<void> => {
   const { chat_id, user_id }: { chat_id: string; user_id: string } = req.body;
 
   // check if the requester is admin
@@ -81,7 +84,10 @@ export const addToGroup = async (req: Request, res: Response<any>) => {
  * @access        protected
  */
 
-export const removeFromGroup = async (req: Request, res: Response<any>) => {
+export const removeFromGroup = async (
+  req: Request,
+  res: Response<any>
+): Promise<void> => {
   const { chat_id, user_id }: { chat_id: string; user_id: string } = req.body;
 
   // check if the requester is admin
@@ -112,7 +118,10 @@ export const removeFromGroup = async (req: Request, res: Response<any>) => {
  * @access        protected
  */
 
-export const renameGroup = async (req: Request, res: Response<any>) => {
+export const renameGroup = async (
+  req: Request,
+  res: Response<any>
+): Promise<void> => {
   const { chatId, chatName } = req.body;
 
   const updatedChat = await Chat.findByIdAndUpdate(
