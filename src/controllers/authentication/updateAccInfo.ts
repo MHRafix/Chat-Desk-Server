@@ -17,8 +17,15 @@ export const updateAccInfo = async (
 ): Promise<void> => {
   const { uid } = req.params;
   const newName: string = req.body.name;
+  const newPic: string = req.body.pic;
+
   const user: any = await User.findOne({ _id: uid });
-  user.user_name = newName;
+
+  if (newName) {
+    user.user_name = newName;
+  } else if (newPic) {
+    user.user_pic = newPic;
+  }
 
   await user.save();
 
