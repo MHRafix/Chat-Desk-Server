@@ -45,10 +45,10 @@ export const createChat = async (req: Request, res: Response) => {
   var isChat: any = await Chat.find({
     isGroupChat: false,
     $and: [
-      { users: { _id: uid } },
-      { users: { _id: user_id } },
-      // { users: { $elemMatch: { $eq: uid } } },
-      // { users: { $elemMatch: { $eq: user_id } } },
+      // { users: { _id: uid } },
+      // { users: { _id: user_id } },
+      { users: { $elemMatch: { $eq: uid } } },
+      { users: { $elemMatch: { $eq: user_id } } },
     ],
   })
     .populate("users", "-user_password")

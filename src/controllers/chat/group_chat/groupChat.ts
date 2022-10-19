@@ -11,8 +11,6 @@ import Chat from "../../../models/Chat";
 export const createGroupChat = async (req: Request, res: Response<any>) => {
   const { uid } = req.params;
 
-  console.log("uid", uid);
-
   if (!req.body.users || !req.body.group_name) {
     return res.status(400).json({ error: "Please Fill all the feilds" });
   }
