@@ -61,7 +61,9 @@ export const createChat = async (req: Request, res: Response) => {
 
   // chek is chat
   if (isChat.length > 0) {
-    res.status(200).json(isChat[0]);
+    res.status(200).json({
+      error: "Chat is already exist!",
+    });
   } else {
     var chatData: any = {
       chatName: "sender",
