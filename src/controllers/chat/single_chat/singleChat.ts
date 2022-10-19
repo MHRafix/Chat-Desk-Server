@@ -61,7 +61,7 @@ export const createChat = async (req: Request, res: Response) => {
 
   // chek is chat
   if (isChat.length > 0) {
-    res.status(200).json({
+    res.status(400).json({
       error: "Chat is already exist!",
     });
   } else {
@@ -70,18 +70,18 @@ export const createChat = async (req: Request, res: Response) => {
       isGroupChat: false,
       users: [uid, user_id],
     };
-  }
 
-  // create chat
-  try {
-    const createdChat = await Chat.create(chatData);
-    const FullChat = await Chat.findOne({
-      _id: createdChat._id,
-    }).populate("users", "-user_password");
+    // create chat
+    try {
+      const createdChat = await Chat.create(chatData);
+      const FullChat = await Chat.findOne({
+        _id: createdChat._id,
+      }).populate("users", "-user_password");
 
-    res.status(200).json(FullChat);
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
+      res.status(200).json(FullChat);
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
+    }
   }
 };
 
