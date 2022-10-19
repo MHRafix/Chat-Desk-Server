@@ -38,7 +38,7 @@ export const createChat = async (req: Request, res: Response) => {
 
   // validate user id
   if (!user_id) {
-    return res.status(204).json({ error: "User id not sent!" });
+    return res.status(202).json({ error: "User id not sent!" });
   }
 
   // find chat
@@ -61,7 +61,7 @@ export const createChat = async (req: Request, res: Response) => {
 
   // chek is chat
   if (isChat.length > 0) {
-    res.status(204).json({
+    res.status(202).json({
       error: "Chat is already exist!",
     });
   } else {
@@ -80,7 +80,7 @@ export const createChat = async (req: Request, res: Response) => {
 
       res.status(200).json(FullChat);
     } catch (err: any) {
-      res.status(204).json({ error: err.message });
+      res.status(202).json({ error: err.message });
     }
   }
 };
