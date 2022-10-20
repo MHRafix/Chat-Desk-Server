@@ -54,13 +54,13 @@ export const addToGroup = async (
   req: Request,
   res: Response<any>
 ): Promise<void> => {
-  const { chat_id, user_id }: { chat_id: string; user_id: string } = req.body;
+  const { chatId, userId }: { chatId: string; userId: string } = req.body;
 
   // check if the requester is admin
   const added = await Chat.findByIdAndUpdate(
-    chat_id,
+    chatId,
     {
-      $push: { users: user_id },
+      $push: { users: userId },
     },
     {
       new: true,
@@ -86,14 +86,14 @@ export const removeFromGroup = async (
   req: Request,
   res: Response<any>
 ): Promise<void> => {
-  const { chat_id, user_id }: { chat_id: string; user_id: string } = req.body;
+  const { chatId, userId }: { chatId: string; userId: string } = req.body;
 
   // check if the requester is admin
 
   const removed = await Chat.findByIdAndUpdate(
-    chat_id,
+    chatId,
     {
-      $pull: { users: user_id },
+      $pull: { users: userId },
     },
     {
       new: true,
