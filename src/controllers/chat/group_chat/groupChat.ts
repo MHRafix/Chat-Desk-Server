@@ -72,7 +72,7 @@ export const addToGroup = async (
   if (!added) {
     res.status(202).json({ error: "Chat Not Found!" });
   } else {
-    res.status(200).json(added);
+    res.status(200).json({ successMssg: "Group member successfully added!" });
   }
 };
 
@@ -105,7 +105,7 @@ export const removeFromGroup = async (
   if (!removed) {
     res.status(202).json({ error: "Chat Not Found" });
   } else {
-    res.status(200).json(removed);
+    res.status(200).json({ successMssg: "Group member successfully removed!" });
   }
 };
 
@@ -137,6 +137,6 @@ export const renameGroup = async (
   if (!updatedChat) {
     res.status(202).json({ error: "Chat Not Found!" });
   } else {
-    res.status(200).json(updatedChat);
+    res.status(200).json({ successMssg: "Group name successfully changed!" });
   }
 };

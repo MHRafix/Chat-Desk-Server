@@ -97,15 +97,20 @@ export const allChat = async (
   res: Response<IOneOneChat[] | { error: string }>
 ): Promise<void> => {
   const { uid } = req.params;
-  const all_chats: IOneOneChat[] | never[] | any[] = await Chat.find({
-    users: { _id: uid },
-  })
-    .populate("users", "-user_password")
-    .populate("groupAdmin", "-user_password")
-    .populate("last_message")
-    .sort({ updatedAt: -1 });
 
-  if (all_chats?.length) {
-    res.status(200).json(all_chats);
+  if (uid) {
+    const all_chats: IOneOneChat[] | never[] | any[] = await Chat.find({
+      users: { _id: uid },
+    })
+      .populate("users", "-user_password")
+      .populate("groupAdmin", "-user_password")
+      .populate("last_message")
+      .sort({ updatedAt: -1 });
+
+    if (all_chats?.length) {
+      res.status(200).json(all_chats);
+    }
+  } else {
+    res.status(400).json({ error: "User id not provided!" });
   }
 };
