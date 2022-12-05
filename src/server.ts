@@ -19,8 +19,8 @@ const port = process.env.PORT; // port
 // cors origin error handler
 app.use(
   cors({
-    // origin: "https://chat-desk.vercel.app",
-    origin: "*",
+    origin: "https://chat-desk.vercel.app",
+    //origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
@@ -51,8 +51,8 @@ const server = app.listen(port, () => {
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "*",
-    // origin: "https://chat-desk.vercel.app",
+    //origin: "*",
+    origin: "https://chat-desk.vercel.app",
   },
 });
 
